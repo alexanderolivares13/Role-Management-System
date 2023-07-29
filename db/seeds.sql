@@ -1,17 +1,38 @@
-insert into employee (id, first_name, last_name, role_id, manager_id) 
-values 
-		(1, 'Bord', 'Crowch', 1, 1),
-		(2, 'Ronnica', 'Sackes', 2, 2),
-		(3, 'Tiphany', 'Lyenyng', 3, 3),
-		(4, 'Maribelle', 'Witnall', 4, 4),
-		(5, 'Roth', 'Dutt', 5, 5),
-		(6, 'Elroy', 'Stitle', 6, 6),
-		(7, 'Irvine', 'Louisot', 7, 7),
-		(8, 'Erinn', 'Preene', 8, 8),
-		(9, 'Genovera', 'Wandrey', 9, 9),
-		(10, 'Ximenez', 'Delaney', 10, 10),
-		(11, 'Kristi', 'Tabord', 11, 11),
-		(12, 'Shelia', 'Taffurelli', 12, 12),
-		(13, 'Chery', 'Trolley', 13, 13),
-		(14, 'Arlen', 'Starmore', 14, 14),
-		(15, 'Ethelbert', 'Philippou', 15, 15);
+INSERT INTO department (dept_name)
+VALUES 
+    ("Accounting"),
+    ("Sales"),
+    ("IT"),
+    ("Engineering"),
+    ("Legal");
+
+INSERT INTO role (title, salary, department_id)
+VALUES 
+    ("Accountant", 100000, 1),
+    ("Account Manager", 130000, 1),
+    ("Salesperson", 75000, 2),
+    ("Lead Salesperson", 90000, 2),
+    ("Technician", 70000, 3),
+    ("IT Admin", 100000, 3),
+    ("Associate Engineer", 110000, 4),
+    ("Lead Engineer", 140000, 4),
+    ("Lawyer", 110000, 5),
+    ("Legal Admin", 140000, 5);
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES 
+    ('Tiphany', 'Lyenyng', 2, NULL),
+    ('BORD', 'Crowch', 1, 1),
+    ('Ronnica', 'Sackes', 1, 1),
+    ('Elroy', 'Stitle', 4, NULL),
+    ('Maribelle', 'Witnall', 3, 4),
+    ('Roth', 'Dutt', 3, 4),
+    ('Genovera', 'Wadrey', 6, NULL),
+    ('Irvine', 'Louisot', 5, 7),
+    ('Erinn', 'Preene', 5, 7),
+    ('Shelia', 'Taffurelli', 8, NULL),
+    ('Ximenex', 'Delaney', 7, 10),
+    ('Kristi', 'Tabord', 7, 10),
+    ('Ethelbert', 'Phillippou', 10, NULL),
+    ('Chery', 'Trolley', 9, 13),
+    ('Arlen', 'Starmore', 9, 13);
