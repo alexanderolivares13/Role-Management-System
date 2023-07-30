@@ -1,10 +1,10 @@
-const roles = require('express').Router();
+const employee = require('express').Router();
 const {connection} = require('../config/connect')
 
-roles.get('/', (req, res) => {
-    const sqlQuery = `SELECT * FROM roles`
+employee.get('/', (req, res) => {
+    const sqlQuery = `SELECT * FROM ?`
 
-    connection.query(sqlQuery, (error, rows) => {
+    connection.execute(sqlQuery,[`employee`], (error, rows) => {
         if (error) {
             res.status(500).json(error);
             return;
@@ -16,4 +16,4 @@ roles.get('/', (req, res) => {
     })
 });
 
-module.exports = roles;
+module.exports = employee

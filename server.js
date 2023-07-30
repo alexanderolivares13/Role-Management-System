@@ -1,21 +1,46 @@
-const express = require('express');
-const mysql = require('mysql2');
+const express = require("express");
+const { connection } = require("./config/connect");
+const api = require("./routes/index");
+const inquirer = require('inquirer');
 const PORT = process.env.PORT || 3001;
-require('dotenv').config();
 
 const app = express();
-const db = mysql.createConnection(
-    {
-        host: 'localhost',
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME
-    },
-    console.log('Connected to database? SUCCESS')
-)
-
+app.use("/api", api);
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.listen(PORT, () =>
-    console.info(`Server listening on PORT ${PORT}`)
-);
+const questions = [
+    {
+        message: 'What would you like to do?',
+        type: 'list',
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Quit'],
+        name: 'choice'
+    }
+]
+
+
+function init () {
+    inquirer
+        .prompt(questions)
+        .then(({choice}) => {
+            if(choice === 'Quit'){
+                return;
+            }
+             return console.log(choice);
+            })}
+            
+ switch (choice) {
+    case 'View All Departments':
+        
+        break;
+
+    default:
+        break;
+}
+
+
+
+app.listen(PORT, () => {
+  console.info(`Server listening on PORT ${PORT}`);
+  init();
+});
