@@ -2,9 +2,9 @@ const employee = require('express').Router();
 const {connection} = require('../config/connect')
 
 employee.get('/', (req, res) => {
-    const sqlQuery = `SELECT * FROM ?`
+    const sqlQuery = `SELECT * FROM employee`
 
-    connection.execute(sqlQuery,[`employee`], (error, rows) => {
+    connection.query(sqlQuery, (error, rows) => {
         if (error) {
             res.status(500).json(error);
             return;
