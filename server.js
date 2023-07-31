@@ -1,6 +1,5 @@
 const express = require("express");
 const { connection } = require("./config/connect");
-const api = require("./routes/index");
 const inquirer = require("inquirer");
 const {
   sqlGetEmployee,
@@ -13,7 +12,6 @@ const {
 const PORT = process.env.PORT || 3001;
 
 const app = express();
-app.use("/api", api);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
@@ -21,6 +19,7 @@ const questions = [
   {
     message: "What would you like to do?",
     type: "list",
+    loop: false,
     choices: [
       "View All Departments",
       "Add a Department",
@@ -42,59 +41,102 @@ const questions = [
   },
   {
     message:
-      "Please enter the Role Name, salary, and department id of the Role that you would like to add: \n (Please indicate each seperate value with a ',' (e.g Customer Service Rep,100000,1) \n (Please refer to the 'View All Department' option to view the ID for each department)\n" ,
+      "Please enter the Role Name, salary, and department id of the Role that you would like to add: \n (Please indicate each seperate value with a ',' (e.g Customer Service Rep,100000,1) \n (Please refer to the 'View All Department' option to view the ID for each department)\n",
     type: "input",
     name: "deptChoice",
     when: (response) => response.choice === "Add a Role",
   },
   {
-    message:
-      "Please enter the Employee first name, last name, role id, and managet id if any: \n (Please indicate each seperate value with a ',' (e.g John,Doe,2,1) \n (Please refer to the 'View All Roles' option to view the ID for each role)\n" ,
+    message: "What is the Employee's first name?\n",
     type: "input",
-    name: "deptChoice",
+    name: "firstName",
+    when: (response) => response.choice === "Add an Employee",
+  },
+  {
+    message: "What is the Employee's last name?\n",
+    type: "input",
+    name: "lastName",
+    when: (response) => response.choice === "Add an Employee",
+  },
+  {
+    message: "What is the Employee's role?\n",
+    type: "list",
+    loop: false,
+    choices: async function () {
+      const sqlQuery = `SELECT * FROM role;`;
+      try {
+        const [rows, fields] = await connection.promise().query({ sql: sqlQuery });
+        return rows.map((role) => {
+          return { name: role.title, value: role.id };
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    name: "empRole",
+    when: (response) => response.choice === "Add an Employee",
+  },
+  {
+    message: "Who is the Employee's manager?\n",
+    type: "list",
+    loop: false,
+    choices: async function () {
+      const sqlQuery = `SELECT DISTINCT e.manager_id, CONCAT(em.first_name," ", em.last_name) AS manager_name FROM employee e JOIN employee em ON em.id = e.manager_id;`;
+      try {
+        const [rows, fields] = await connection.promise().query({ sql: sqlQuery });
+        const choiceArray = rows.map((manger) => {
+          return { name: manger.manager_name, value: manger.manager_id };
+        });
+        choiceArray.push({name: "N/A", value: null})
+        return  choiceArray;
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    name: "empMan",
     when: (response) => response.choice === "Add an Employee",
   },
 ];
 
-
 function init() {
-  inquirer.prompt(questions).then(({choice, deptChoice}) => {
-    switch (choice, deptChoice) {
-      case (choice === "View All Departments" && deptChoice):
+  inquirer.prompt(questions).then((answers) => {
+    switch (answers.choice) {
+      case "View All Departments":
         sqlGetDepartment().then(() => {
           init();
         });
         break;
-      case (choice === "View All Roles" && deptChoice):
+      case "View All Roles":
         sqlGetRole().then(() => {
           init();
         });
         break;
-      case (choice === "View All Employees" && deptChoice):
+      case "View All Employees":
         sqlGetEmployee().then(() => {
           init();
         });
         break;
-      case choice === "Add a Department" && deptChoice:
+      case "Add a Department":
         sqlAddDepartment(deptChoice).then(() => {
           init();
         });
         break;
-        case choice === "Add a Role" && deptChoice:
-            deptChoice = deptChoice.split(",");
+      case "Add a Role":
+        deptChoice = deptChoice.split(",");
         sqlAddRole(deptChoice).then(() => {
           init();
         });
         break;
-        case choice === "Add an Employee" && deptChoice:
-            deptChoice = deptChoice.split(",");
-        sqlAddEmployee(deptChoice).then(() => {
+      case "Add an Employee":
+        let valueArray = []
+        valueArray.push(answers.firstName, answers.lastName, answers.empRole, answers.empMan);
+        sqlAddEmployee(valueArray).then(() => {
           init();
         });
         break;
       default:
         console.log("\nGoodbye");
-        break;
+        process.exit();
     }
   });
 }
