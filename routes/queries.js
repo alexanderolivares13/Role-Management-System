@@ -68,6 +68,16 @@ async function sqlAddRole(valueArray) {
   }
 }
 
+async function sqlUpdateRole (valueArray) {
+  const sqlQuery = `UPDATE employee SET role_id = ? WHERE id = ?`
+  try {
+    const [rows, fields] = await connection.promise().query(sqlQuery, valueArray);
+    return console.log("\nRole successfully updated!\n")
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 module.exports = {
   sqlGetEmployee,
   sqlGetDepartment,
@@ -75,4 +85,5 @@ module.exports = {
   sqlAddEmployee,
   sqlAddDepartment,
   sqlAddRole,
+  sqlUpdateRole
 };
