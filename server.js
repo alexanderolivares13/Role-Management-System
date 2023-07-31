@@ -17,7 +17,7 @@ app.use(express.json());
 
 const questions = [
   {
-    message: "What would you like to do?",
+    message: "What would you like to do?\n",
     type: "list",
     loop: false,
     choices: [
@@ -41,9 +41,35 @@ const questions = [
   },
   {
     message:
-      "Please enter the Role Name, salary, and department id of the Role that you would like to add: \n (Please indicate each seperate value with a ',' (e.g Customer Service Rep,100000,1) \n (Please refer to the 'View All Department' option to view the ID for each department)\n",
+      "Please enter the name of the Role that you would like to add:\n",
     type: "input",
-    name: "deptChoice",
+    name: "roleName",
+    when: (response) => response.choice === "Add a Role",
+  },
+  {
+    message:
+      "Please enter the salary for the Role that you would like to add:\n",
+    type: "input",
+    name: "salary",
+    when: (response) => response.choice === "Add a Role",
+  },
+  {
+    message:
+      "Please enter the department that corresponds with the Role:\n",
+    type: "list",
+    loop: false,
+    choices: async function () {
+      const sqlQuery = `Select dept_name, id FROM department;`
+      try {
+        const [rows, fields] = await connection.promise().query({ sql: sqlQuery });
+        return rows.map((dept) => {
+          return { name: dept.dept_name, value: dept.id };
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    name: "deptId",
     when: (response) => response.choice === "Add a Role",
   },
   {
@@ -122,8 +148,9 @@ function init() {
         });
         break;
       case "Add a Role":
-        deptChoice = deptChoice.split(",");
-        sqlAddRole(deptChoice).then(() => {
+        let roleArray = []
+        roleArray.push(answers.roleName, answers.salary, answers.deptId)
+      sqlAddRole(roleArray).then(() => {
           init();
         });
         break;
