@@ -47,7 +47,15 @@ const questions = [
     name: "deptChoice",
     when: (response) => response.choice === "Add a Role",
   },
+  {
+    message:
+      "Please enter the Employee first name, last name, role id, and managet id if any: \n (Please indicate each seperate value with a ',' (e.g John,Doe,2,1) \n (Please refer to the 'View All Roles' option to view the ID for each role)\n" ,
+    type: "input",
+    name: "deptChoice",
+    when: (response) => response.choice === "Add an Employee",
+  },
 ];
+
 
 function init() {
   inquirer.prompt(questions).then(({choice, deptChoice}) => {
@@ -75,6 +83,12 @@ function init() {
         case choice === "Add a Role" && deptChoice:
             deptChoice = deptChoice.split(",");
         sqlAddRole(deptChoice).then(() => {
+          init();
+        });
+        break;
+        case choice === "Add an Employee" && deptChoice:
+            deptChoice = deptChoice.split(",");
+        sqlAddEmployee(deptChoice).then(() => {
           init();
         });
         break;

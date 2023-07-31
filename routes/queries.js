@@ -13,7 +13,7 @@ async function sqlAddEmployee(valueArray) {
     const sqlQuery = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
     try {
       const [rows, fields] = await connection.promise().query(sqlQuery, valueArray);
-      return console.log(`Added ${valueArray[0]} to the database`);
+      return console.log(`\nAdded ${valueArray[0]} ${valueArray[1]} to the database\n`);
     } catch (err) {
       console.error(err);
     }
