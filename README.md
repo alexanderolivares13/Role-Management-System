@@ -44,7 +44,8 @@
 
   ## Credits
   
-  N/A
+  Inquirer package used: https://www.npmjs.com/package/inquirer <br>
+  Dummy data generated from: https://mockaroo.com <br>
 
   ## License
 
