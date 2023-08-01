@@ -10,7 +10,7 @@ async function sqlGetEmployee() {
   ON e.role_id = r.id 
   RIGHT JOIN department d 
   on d.id = r.department_id
-  JOIN employee em
+  LEFT JOIN employee em
   ON em.id = e.manager_id;`;
   try {
     const [rows, fields] = await connection.promise().query(sqlQuery);
